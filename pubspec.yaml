@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  firebase_data_connect: ^0.1.4+1
 
 dev_dependencies:
   flutter_test:
