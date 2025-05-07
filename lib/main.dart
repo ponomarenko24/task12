@@ -1,14 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:task_12/screens/habits_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
-
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -32,9 +30,11 @@ class AuthGate extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         } else if (snapshot.hasData) {
-          return const HomeScreen();
+          return const HabitsScreen();
         } else {
           return const LoginScreen();
         }
@@ -77,9 +77,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void showError(String? message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message ?? 'error')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message ?? 'Error')));
   }
 
   @override
@@ -111,29 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(user?.email ?? 'unknown user'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-            },
-          ),
-        ],
-      ),
-      body: const Center(child: Text('login ok')),
     );
   }
 }
