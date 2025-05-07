@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
+import 'package:task_12/models/habit.dart';
 
 class AddHabitScreen extends StatefulWidget {
   const AddHabitScreen({super.key});
@@ -11,32 +13,51 @@ class AddHabitScreen extends StatefulWidget {
 
 class _AddHabitScreenState extends State<AddHabitScreen> {
   final nameController = TextEditingController();
+  String frequency = 'Щодня';
+  final startDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   Future<void> addHabit() async {
     final id = FirebaseFirestore.instance.collection('habits').doc().id;
     final userId = FirebaseAuth.instance.currentUser!.uid;
-    await FirebaseFirestore.instance.collection('habits').doc(id).set({
-      'id': id,
-      'name': nameController.text,
-      'frequency': 'Щодня',
-      'startDate': DateTime.now().toIso8601String(),
-      'progress': {},
-      'userId': userId,
-    });
+
+    final habit = Habit(
+      id: id,
+      name: nameController.text,
+      frequency: frequency,
+      startDate: startDate,
+      progress: {},
+      userId: userId,
+    );
+
+    await FirebaseFirestore.instance.collection('habits').doc(id).set(habit.toMap());
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Додати звичку')),
+      appBar: AppBar(title: const Text('Нова звичка')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            TextField(controller: nameController, decoration: const InputDecoration(labelText: 'Назва')),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: addHabit, child: const Text('Додати')),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Назва'),
+            ),
+            const SizedBox(height: 16),
+            DropdownButton<String>(
+              value: frequency,
+              items: ['Щодня', 'Раз на тиждень', 'Раз на місяць'].map((value) {
+                return DropdownMenuItem(value: value, child: Text(value));
+              }).toList(),
+              onChanged: (val) => setState(() => frequency = val!),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: addHabit,
+              child: const Text('Додати'),
+            ),
           ],
         ),
       ),

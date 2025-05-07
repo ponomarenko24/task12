@@ -31,11 +31,10 @@ class HabitsScreen extends StatelessWidget {
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream:
-            FirebaseFirestore.instance
-                .collection('habits')
-                .where('userId', isEqualTo: userId)
-                .snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('habits')
+            .where('userId', isEqualTo: userId)
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -45,26 +44,22 @@ class HabitsScreen extends StatelessWidget {
           }
 
           return ListView(
-            children:
-                snapshot.data!.docs.map((doc) {
-                  final habit = doc.data() as Map<String, dynamic>;
-                  return ListTile(
-                    title: Text(habit['name']),
-                    trailing: const Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                    ),
-                  );
-                }).toList(),
+            children: snapshot.data!.docs.map((doc) {
+              final habit = doc.data() as Map<String, dynamic>;
+              return ListTile(
+                title: Text(habit['name']),
+                subtitle: Text('Частота: ${habit['frequency']}'), // Додаємо частоту
+                trailing: const Icon(Icons.check_circle, color: Colors.green),
+              );
+            }).toList(),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed:
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AddHabitScreen()),
-            ),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AddHabitScreen()),
+        ),
         child: const Icon(Icons.add),
       ),
     );
