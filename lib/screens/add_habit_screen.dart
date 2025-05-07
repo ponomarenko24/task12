@@ -13,7 +13,7 @@ class AddHabitScreen extends StatefulWidget {
 
 class _AddHabitScreenState extends State<AddHabitScreen> {
   final nameController = TextEditingController();
-  String frequency = 'Щодня';
+  String frequency = 'Every day';
   final startDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   Future<void> addHabit() async {
@@ -28,36 +28,38 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
       progress: {},
       userId: userId,
     );
-
-    await FirebaseFirestore.instance.collection('habits').doc(id).set(habit.toMap());
-    Navigator.pop(context);
+    await FirebaseFirestore.instance
+        .collection('habits')
+        .doc(id)
+        .set(habit.toMap());
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Нова звичка')),
+      appBar: AppBar(title: const Text('New habit')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: 'Назва'),
+              decoration: const InputDecoration(labelText: 'Name'),
             ),
             const SizedBox(height: 16),
             DropdownButton<String>(
               value: frequency,
-              items: ['Щодня', 'Раз на тиждень', 'Раз на місяць'].map((value) {
-                return DropdownMenuItem(value: value, child: Text(value));
-              }).toList(),
+              items:
+                  ['Every day', 'Once a week', 'Once a month'].map((value) {
+                    return DropdownMenuItem(value: value, child: Text(value));
+                  }).toList(),
               onChanged: (val) => setState(() => frequency = val!),
             ),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: addHabit,
-              child: const Text('Додати'),
-            ),
+            ElevatedButton(onPressed: addHabit, child: const Text('Add')),
           ],
         ),
       ),

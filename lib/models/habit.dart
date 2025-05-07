@@ -25,4 +25,15 @@ class Habit {
       'userId': userId,
     };
   }
+
+  static Habit fromMap(Map<String, dynamic> map) {
+    return Habit(
+      id: map['id'],
+      name: map['name'],
+      frequency: map['frequency'],
+      startDate: map['startDate'],
+      progress: Map<String, bool>.from(map['progress'] ?? {}),
+      userId: map['userId'],
+    );
+  }
 }
